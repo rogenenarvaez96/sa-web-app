@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Job Receipt — <%= job.saNumber %></title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+
+<div class="print-page">
+
+  <!-- Shop Header -->
+  <div class="shop-header">
+    <h2>🔧 Repair Shop</h2>
+    <p>Your trusted gadget repair center</p>
+    <p><%= job.branch %></p>
+  </div>
+
+  <!-- Document Info -->
+  <div class="d-flex justify-content-between mb-4 print-section">
+    <div>
+      <strong>SA Number:</strong> <%= job.saNumber %>
+    </div>
+    <div>
+      <strong>Date Received:</strong> <%= job.createdAt.toLocaleDateString() %>
+    </div>
+    <div>
+      <strong>Status:</strong> <%= job.status.toUpperCase() %>
+    </div>
+  </div>
+
+  <!-- Customer Info -->
+  <div class="mb-4 print-section">
+    <div class="section-title">Customer Information</div>
+    <div class="info-grid">
+      <span><strong>Name:</strong> <%= job.customer.name %></span>
+      <span><strong>Phone:</strong> <%= job.customer.phone %></span>
+      <% if (job.customer.email) { %>
+        <span><strong>Email:</strong> <%= job.customer.email %></span>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Device Info -->
+  <div class="mb-4 print-section">
+    <div class="section-title">Device Information</div>
+    <div class="info-grid">
+      <span><strong>Type:</strong> <%= job.device.type %></span>
+      <span><strong>Brand:</strong> <%= job.device.brand %></span>
+      <span><strong>Model:</strong> <%= job.device.model %></span>
+      <% if (job.device.serialNumber) { %>
+        <span><strong>Serial No:</strong> <%= job.device.serialNumber %></span>
+      <% } %>
+      <% if (job.device.color) { %>
+        <span><strong>Color:</strong> <%= job.device.color %></span>
+      <% } %>
+      <% if (job.device.accessories) { %>
+    <span><strong>Accessories:</strong> <%= job.device.accessories %></span>
+    <% } %>
+</div>
+    </div>
+  </div>
+
+  <!-- Tech Findings -->
+  <% if (job.techFindings) { %>
+    <div class="mb-4 print-section">
+      <div class="section-title">Tech Findings</div>
+      <p class="mb-0" style="font-size:13px;"><%= job.techFindings %></p>
+    </div>
+  <% } %>
+
+  <!-- Repairs Done -->
+  <div class="mb-4 print-section">
+    <div class="section-title">Repairs Done</div>
+    <% if (job.repairsDone.length > 0) { %>
+      <ol style="font-size:13px;">
+        <% job.repairsDone.forEach(r => { %>
+          <li><%= r.description %></li>
+        <% }) %>
+      </ol>
+    <% } else { %>
+      <p class="text-muted" style="font-size:13px;">None recorded.</p>
+    <% } %>
+  </div>
+
+  <!-- Parts Used -->
+  <div class="mb-4 print-section">
+    <div class="section-title">Parts Used</div>
+    <% if (job.partsUsed.length > 0) { %>
+      <ol style="font-size:13px;">
+        <% job.partsUsed.forEach(p => { %>
+          <li><%= p.partName %></li>
+        <% }) %>
+      </ol>
+    <% } else { %>
+      <p class="text-muted" style="font-size:13px;">None recorded.</p>
+    <% } %>
+  </div>
+
+  <!-- Job Summary -->
+  <div class="mb-4 print-section">
+    <div class="section-title">Job Summary</div>
+    <div class="info-grid">
+      <span><strong>Attending Tech:</strong> <%= job.attendingTech %></span>
+      <span><strong>Total Price:</strong> ₱<%= job.totalPrice.toFixed(2) %></span>
+    </div>
+  </div>
+
+  <!-- History Log -->
+  <div class="mb-4 print-section">
+    <div class="section-title">Service History</div>
+    <% if (job.history.length > 0) { %>
+      <% job.history.forEach(h => { %>
+        <div class="history-item">
+          <span class="text-muted"><%= h.performedAt.toLocaleString() %></span> —
+          <strong><%= h.performedBy %></strong>: <%= h.action %>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p class="text-muted" style="font-size:13px;">No history recorded.</p>
+    <% } %>
+  </div>
+
+  <!-- Warranty Note -->
+  <div class="mb-4 print-section">
+    <div class="section-title">Warranty</div>
+    <p style="font-size:12px;">
+      This repair comes with a <strong>7-day warranty</strong> covering the specific repair performed.
+      Warranty is void if the device is opened, tampered with, or subjected to physical/liquid damage
+      after release. Accessories and cosmetic issues are not covered.
+    </p>
+  </div>
+
+  <!-- Terms & Conditions -->
+  <div class="mb-4 print-section">
+    <div class="section-title">Terms &amp; Conditions</div>
+    <p style="font-size:11px; color:#444;">
+      1. The shop is not liable for any pre-existing conditions not mentioned at the time of intake.<br/>
+      2. Unclaimed devices after <strong>30 days</strong> from the completion date will be subject to storage fees.<br/>
+      3. The shop reserves the right to refuse service.<br/>
+      4. Payment is due upon release of the device.<br/>
+      5. The shop is not responsible for data loss during repair.
+    </p>
+  </div>
+
+  <!-- Signature -->
+  <div class="mt-5 print-section">
+    <div class="signature-line"></div>
+    <p style="font-size:12px; margin-top:6px;">
+      Customer Signature &nbsp;&nbsp;&nbsp; Date: _______________
+    </p>
+    <p style="font-size:11px; color:#555;">
+      By signing above, the customer confirms receipt of the device and agrees to the terms above.
+    </p>
+  </div>
+
+</div>
+
+<!-- Print Button (hidden when printing) -->
+<div class="no-print print-btn">
+  <button onclick="window.print()" class="btn btn-dark btn-lg shadow">
+    🖨 Print / Save as PDF
+  </button>
+</div>
+
+</body>
+</html>

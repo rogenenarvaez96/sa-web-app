@@ -1,0 +1,85 @@
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    font-size: 13px;
+  }
+
+  .print-section {
+    page-break-inside: avoid;
+  }
+}
+
+.print-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px;
+  font-family: Arial, sans-serif;
+}
+
+.shop-header {
+  text-align: center;
+  border-bottom: 2px solid #000;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.shop-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.shop-header p {
+  margin: 2px 0;
+  font-size: 13px;
+  color: #444;
+}
+
+.section-title {
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 20px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.info-grid span {
+  display: block;
+}
+
+.info-grid strong {
+  min-width: 110px;
+  display: inline-block;
+}
+
+.history-item {
+  font-size: 12px;
+  margin-bottom: 6px;
+  border-left: 3px solid #ccc;
+  padding-left: 8px;
+}
+
+.signature-line {
+  border-top: 1px solid #000;
+  width: 60%;
+  margin-top: 40px;
+}
+
+.print-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+}

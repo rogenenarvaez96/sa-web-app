@@ -1,0 +1,69 @@
+<%- include('../layout/header') %>
+
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4 class="mb-0">Admin Panel</h4>
+      <a href="/jobs" class="btn btn-secondary btn-sm">← Back to Jobs</a>
+    </div>
+
+    <!-- Logo Upload -->
+    <div class="card mb-4">
+      <div class="card-header fw-bold">Site Logo</div>
+      <div class="card-body">
+        <% if (logoFile) { %>
+          <img src="<%= logoFile %>" alt="Current Logo" style="max-height:60px;" class="mb-3 d-block"/>
+        <% } else { %>
+          <p class="text-muted">No logo uploaded yet.</p>
+        <% } %>
+        <form action="/admin/logo" method="POST" enctype="multipart/form-data" class="d-flex gap-2">
+          <input type="file" name="logo" class="form-control" accept="image/*" required/>
+          <button class="btn btn-primary">Upload</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- User Management -->
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center fw-bold">
+        Users
+        <a href="/admin/users/new" class="btn btn-sm btn-success">+ Add User</a>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-bordered mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>Username</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% users.forEach(u => { %>
+              <tr>
+                <td><%= u.username %></td>
+                <td><span class="badge bg-<%= u.role === 'admin' ? 'danger' : u.role === 'technician' ? 'primary' : 'secondary' %>"><%= u.role %></span></td>
+                <td><span class="badge bg-<%= u.isActive ? 'success' : 'secondary' %>"><%= u.isActive ? 'Active' : 'Inactive' %></span></td>
+                <td><%= u.createdAt.toLocaleDateString() %></td>
+                <td class="d-flex gap-1">
+                  <a href="/admin/users/<%= u._id %>/reset" class="btn btn-sm btn-warning">Reset Password</a>
+                  <form action="/admin/users/<%= u._id %>/toggle" method="POST">
+                    <button class="btn btn-sm btn-<%= u.isActive ? 'secondary' : 'success' %>">
+                      <%= u.isActive ? 'Deactivate' : 'Activate' %>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<%- include('../layout/footer') %>

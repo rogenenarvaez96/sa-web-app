@@ -1,0 +1,82 @@
+<%- include('layout/header') %>
+
+<div class="row">
+
+  <!-- Sidebar -->
+  <div class="col-md-2">
+    <div class="list-group">
+      <a href="/jobs?status=all"
+         class="list-group-item list-group-item-action <%= currentStatus === 'all' ? 'active' : '' %>">
+        All Jobs
+      </a>
+      <a href="/jobs?status=pending"
+         class="list-group-item list-group-item-action <%= currentStatus === 'pending' ? 'active' : '' %>">
+        Pending
+      </a>
+      <a href="/jobs?status=done"
+         class="list-group-item list-group-item-action <%= currentStatus === 'done' ? 'active' : '' %>">
+        Done
+      </a>
+      <a href="/jobs?status=rto"
+         class="list-group-item list-group-item-action <%= currentStatus === 'rto' ? 'active' : '' %>">
+        RTO
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="col-md-10">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">
+        <% if (currentStatus === 'all') { %>
+          All Jobs
+        <% } else { %>
+          <%= currentStatus.toUpperCase() %> Jobs
+        <% } %>
+      </h5>
+      <a href="/jobs/new" class="btn btn-primary btn-sm">+ New Job</a>
+    </div>
+
+    <% if (jobs.length === 0) { %>
+      <p class="text-muted">No jobs found.</p>
+    <% } else { %>
+      <table class="table table-bordered table-hover align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>SA Number</th>
+            <th>Customer</th>
+            <th>Device Model</th>
+            <th>Branch</th>
+            <th>Status</th>
+            <th>Date Received</th>
+            <th>Last Updated</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% jobs.forEach(job => { %>
+            <tr>
+              <td><%= job.saNumber %></td>
+              <td><%= job.customer.name %></td>
+              <td><%= job.device.brand %> <%= job.device.model %></td>
+              <td><%= job.branch %></td>
+              <td>
+                <span class="badge bg-<%= job.status === 'pending' ? 'warning text-dark' : job.status === 'done' ? 'success' : 'secondary' %>">
+                  <%= job.status.toUpperCase() %>
+                </span>
+              </td>
+              <td><%= job.createdAt.toLocaleDateString() %></td>
+              <td><%= job.updatedAt.toLocaleDateString() %></td>
+              <td>
+                <a href="/jobs/<%= job._id %>" class="btn btn-sm btn-outline-primary">View</a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+</div>
+
+<%- include('layout/footer') %>

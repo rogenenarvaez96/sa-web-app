@@ -1,0 +1,208 @@
+<%- include('layout/header') %>
+
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h4 class="mb-0"><%= job.saNumber %></h4>
+        <small class="text-muted">
+          Received: <%= job.createdAt.toLocaleDateString() %> |
+          Branch: <%= job.branch %>
+        </small>
+      </div>
+      <div class="d-flex gap-2 align-items-center">
+        <span class="badge fs-6 bg-<%= job.status === 'pending' ? 'warning text-dark' : job.status === 'done' ? 'success' : 'secondary' %>">
+          <%= job.status.toUpperCase() %>
+        </span>
+        <% if (job.status === 'done' || job.status === 'rto') { %>
+          <a href="/jobs/<%= job._id %>/print" class="btn btn-outline-dark btn-sm" target="_blank">🖨 Print</a>
+        <% } %>
+        <a href="/jobs" class="btn btn-secondary btn-sm">← Back</a>
+      </div>
+    </div>
+
+    <!-- Customer Info (read-only) -->
+    <div class="card mb-4">
+      <div class="card-header fw-bold">Customer Info</div>
+      <div class="card-body row g-2">
+        <div class="col-md-4"><strong>Name:</strong> <%= job.customer.name %></div>
+        <div class="col-md-4"><strong>Phone:</strong> <%= job.customer.phone %></div>
+        <div class="col-md-4"><strong>Email:</strong> <%= job.customer.email || '—' %></div>
+      </div>
+    </div>
+
+    <!-- Device Info (read-only) -->
+    <div class="card mb-4">
+      <div class="card-header fw-bold">Device Info</div>
+      <div class="card-body row g-2">
+        <div class="col-md-4"><strong>Type:</strong> <%= job.device.type %></div>
+        <div class="col-md-4"><strong>Brand:</strong> <%= job.device.brand %></div>
+        <div class="col-md-4"><strong>Model:</strong> <%= job.device.model %></div>
+        <div class="col-md-4"><strong>Serial:</strong> <%= job.device.serialNumber || '—' %></div>
+        <div class="col-md-4"><strong>Color:</strong> <%= job.device.color || '—' %></div>
+        <div class="col-md-4"><strong>Accessories:</strong> <%= job.device.accessories || '—' %></div>
+      </div>
+    </div>
+
+    <!-- Tech Findings (read-only) -->
+    <div class="card mb-4">
+      <div class="card-header fw-bold">Tech Findings</div>
+      <div class="card-body">
+        <%= job.techFindings || '—' %>
+      </div>
+    </div>
+
+    <% if (job.status === 'pending') { %>
+
+      <!-- Add Repair (editable) -->
+      <div class="card mb-4">
+        <div class="card-header fw-bold">Repairs Done</div>
+        <div class="card-body">
+          <% if (job.repairsDone.length > 0) { %>
+            <ul class="mb-3">
+              <% job.repairsDone.forEach(r => { %>
+                <li><%= r.description %> <small class="text-muted">— <%= r.addedBy %>, <%= r.addedAt.toLocaleDateString() %></small></li>
+              <% }) %>
+            </ul>
+          <% } else { %>
+            <p class="text-muted mb-3">No repairs added yet.</p>
+          <% } %>
+          <form action="/jobs/<%= job._id %>/repair" method="POST" class="row g-2">
+            <div class="col-md-7">
+              <input type="text" name="description" class="form-control" placeholder="Repair description" required/>
+            </div>
+            <div class="col-md-3">
+              <input type="text" name="performedBy" class="form-control" placeholder="Technician"/>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-primary w-100">Add</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+     <!-- Add Part (editable) -->
+<div class="card mb-4">
+  <div class="card-header fw-bold">Parts Used</div>
+  <div class="card-body">
+    <% if (job.partsUsed.length > 0) { %>
+      <ul class="mb-3">
+        <% job.partsUsed.forEach(p => { %>
+          <li><%= p.partName %> <small class="text-muted">— <%= p.addedBy %>, <%= p.addedAt.toLocaleDateString() %></small></li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p class="text-muted mb-3">No parts added yet.</p>
+    <% } %>
+    <form action="/jobs/<%= job._id %>/part" method="POST" class="row g-2">
+      <div class="col-md-7">
+        <input type="text" name="partName" class="form-control" placeholder="Part description" required/>
+      </div>
+      <div class="col-md-3">
+        <input type="text" name="performedBy" class="form-control" placeholder="Technician"/>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100">Add</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+      <!-- Update Status (editable) -->
+      <div class="card mb-4">
+        <div class="card-header fw-bold">Update Job</div>
+        <div class="card-body">
+          <form action="/jobs/<%= job._id %>/status" method="POST" class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">Status</label>
+              <select name="status" class="form-select">
+                <option value="pending" <%= job.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                <option value="done"    <%= job.status === 'done'    ? 'selected' : '' %>>Done</option>
+                <option value="rto"     <%= job.status === 'rto'     ? 'selected' : '' %>>RTO</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Total Price (₱)</label>
+              <input type="number" name="totalPrice" class="form-control" value="<%= job.totalPrice %>" min="0" step="0.01"/>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Attending Technician</label>
+              <input type="text" name="attendingTech" class="form-control" value="<%= job.attendingTech %>"/>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <button class="btn btn-success w-100">Update</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    <% } else { %>
+
+      <!-- Read-only Repairs -->
+      <div class="card mb-4">
+        <div class="card-header fw-bold">Repairs Done</div>
+        <div class="card-body">
+          <% if (job.repairsDone.length > 0) { %>
+            <ul>
+              <% job.repairsDone.forEach(r => { %>
+                <li><%= r.description %> <small class="text-muted">— <%= r.addedBy %>, <%= r.addedAt.toLocaleDateString() %></small></li>
+              <% }) %>
+            </ul>
+          <% } else { %><p class="text-muted">None.</p><% } %>
+        </div>
+      </div>
+
+      <!-- Read-only Parts -->
+      <!-- Read-only Parts -->
+<div class="card mb-4">
+  <div class="card-header fw-bold">Parts Used</div>
+  <div class="card-body">
+    <% if (job.partsUsed.length > 0) { %>
+      <ul>
+        <% job.partsUsed.forEach(p => { %>
+          <li><%= p.partName %> <small class="text-muted">— <%= p.addedBy %></small></li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p class="text-muted">None.</p>
+    <% } %>
+  </div>
+</div>
+
+      <!-- Read-only Summary -->
+      <div class="card mb-4">
+        <div class="card-header fw-bold">Job Summary</div>
+        <div class="card-body row g-2">
+          <div class="col-md-4"><strong>Total Price:</strong> ₱<%= job.totalPrice.toFixed(2) %></div>
+          <div class="col-md-4"><strong>Technician:</strong> <%= job.attendingTech %></div>
+          <div class="col-md-4"><strong>Status:</strong> <%= job.status.toUpperCase() %></div>
+        </div>
+      </div>
+
+    <% } %>
+
+    <!-- History Log (always visible) -->
+    <div class="card mb-4">
+      <div class="card-header fw-bold">History Log</div>
+      <div class="card-body">
+        <% if (job.history.length > 0) { %>
+          <ul class="list-unstyled mb-0">
+            <% job.history.slice().reverse().forEach(h => { %>
+              <li class="mb-2">
+                <span class="text-muted small"><%= h.performedAt.toLocaleString() %></span><br/>
+                <strong><%= h.performedBy %></strong> — <%= h.action %>
+              </li>
+            <% }) %>
+          </ul>
+        <% } else { %>
+          <p class="text-muted">No history yet.</p>
+        <% } %>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<%- include('layout/footer') %>
