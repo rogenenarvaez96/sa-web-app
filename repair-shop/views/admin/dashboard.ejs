@@ -2,12 +2,41 @@
 
 <div class="row justify-content-center">
   <div class="col-lg-9">
-
+    <h6 class="text-muted mb-3"><%= locals.shopName || 'Repair Shop' %></h6>
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h4 class="mb-0">Admin Panel</h4>
       <a href="/jobs" class="btn btn-secondary btn-sm">← Back to Jobs</a>
     </div>
-
+<!-- Shop Name -->
+<div class="card mb-4">
+  <div class="card-header fw-bold">Shop Name</div>
+  <div class="card-body">
+    <form action="/admin/settings" method="POST">
+  <div class="mb-3">
+    <label class="form-label">Shop Name</label>
+    <input
+      type="text"
+      name="shopName"
+      class="form-control"
+      value="<%= setting.shopName %>"
+      placeholder="Enter shop name"
+      required
+    />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Slogan</label>
+    <input
+      type="text"
+      name="shopSlogan"
+      class="form-control"
+      value="<%= setting.shopSlogan %>"
+      placeholder="Enter shop slogan"
+    />
+  </div>
+  <button class="btn btn-primary">Save</button>
+</form>
+  </div>
+</div>
     <!-- Logo Upload -->
     <div class="card mb-4">
       <div class="card-header fw-bold">Site Logo</div>

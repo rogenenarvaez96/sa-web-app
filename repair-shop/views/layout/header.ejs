@@ -11,10 +11,9 @@
 <nav class="navbar navbar-dark bg-dark px-4">
   <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/jobs">
     <% if (locals.logoFile) { %>
-      <img src="<%= logoFile %>" alt="Logo" style="max-height:32px;"/>
-    <% } else { %>
-      🔧 Repair Shop
-    <% } %>
+  <img src="<%= logoFile %>" alt="Logo" style="max-height:32px;"/>
+<% } %>
+<%= locals.shopName || 'Repair Shop' %>
   </a>
   <div class="d-flex align-items-center gap-3">
     <% if (locals.user) { %>

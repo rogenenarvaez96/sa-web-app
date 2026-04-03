@@ -12,11 +12,14 @@
 <div class="print-page">
 
   <!-- Shop Header -->
-  <div class="shop-header">
-    <h2>🔧 Repair Shop</h2>
-    <p>Your trusted gadget repair center</p>
-    <p><%= job.branch %></p>
-  </div>
+ <div class="shop-header">
+  <% if (locals.logoFile) { %>
+    <img src="<%= locals.logoFile %>" alt="Logo" style="max-height:70px; display:block; margin: 0 auto 8px;" />
+  <% } %>
+  <h2><%= locals.shopName || 'Repair Shop' %></h2>
+  <p><%= locals.shopSlogan || 'Your trusted gadget repair center' %></p>
+  <p><%= job.branch %></p>
+</div>
 
   <!-- Document Info -->
   <div class="d-flex justify-content-between mb-4 print-section">
@@ -61,7 +64,7 @@
     <% } %>
 </div>
     </div>
-  </div>
+  
 
   <!-- Tech Findings -->
   <% if (job.techFindings) { %>
@@ -156,6 +159,7 @@
     </p>
   </div>
 
+</div>
 </div>
 
 <!-- Print Button (hidden when printing) -->

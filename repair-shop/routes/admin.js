@@ -27,5 +27,6 @@ router.get('/users/:id/reset',      adminController.getResetPassword);
 router.post('/users/:id/reset',     adminController.resetPassword);
 router.post('/users/:id/toggle',    adminController.toggleUser);
 router.post('/logo',                upload.single('logo'), adminController.uploadLogo);
-
+router.get('/settings',  adminController.getSettings);
+router.post('/settings', adminController.updateSettings);
 module.exports = router;

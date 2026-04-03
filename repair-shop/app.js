@@ -35,13 +35,22 @@ app.use(session({
   cookie: { maxAge: 30 * 60 * 1000 } // 30 minutes
 }));
 
-// Make user and logo available in all views
-app.use((req, res, next) => {
-  res.locals.user = req.session.user || null;
-  const logoPath = path.join(__dirname, 'public/uploads/logo');
-  const logoFiles = fs.readdirSync(logoPath).filter(f => /\.(png|jpg|jpeg|svg|gif)$/i.test(f));
-  res.locals.logoFile = logoFiles.length > 0 ? `/uploads/logo/${logoFiles[0]}` : null;
-  next();
+// Make user, logo, and shop name available in all views
+const Setting = require('./models/Setting');
+app.use(async (req, res, next) => {
+  try {
+    res.locals.user = req.session.user || null;
+    const logoPath = path.join(__dirname, 'public/uploads/logo');
+    const logoFiles = fs.readdirSync(logoPath).filter(f => /\.(png|jpg|jpeg|svg|gif)$/i.test(f));
+    res.locals.logoFile = logoFiles.length > 0 ? `/uploads/logo/${logoFiles[0]}` : null;
+    let setting = await Setting.findOne();
+    if (!setting) setting = await Setting.create({ shopName: 'Repair Shop', shopSlogan: 'Your trusted gadget repair center' });
+    res.locals.shopName = setting.shopName;
+    res.locals.shopSlogan = setting.shopSlogan;
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Routes

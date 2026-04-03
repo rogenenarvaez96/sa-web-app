@@ -55,11 +55,11 @@ exports.createJob = async (req, res) => {
             accessories:  deviceAccessories || ''
           },
           techFindings,
-          attendingTech: attendingTech || 'Unassigned',
+          attendingTech: req.session.user.username,
           history: [
             {
               action:      'Job created',
-              performedBy: attendingTech || 'Unassigned',
+              performedBy: req.session.user.username,
               performedAt: new Date()
             }
           ]
@@ -110,19 +110,20 @@ exports.addRepair = async (req, res) => {
       return res.redirect(`/jobs/${job._id}`);
     }
 
-    const { description, performedBy } = req.body;
+const { description } = req.body;
+const performedBy = req.session.user.username;
 
-    job.repairsDone.push({
-      description,
-      addedBy: performedBy || 'Unassigned',
-      addedAt: new Date()
-    });
+job.repairsDone.push({
+  description,
+  addedBy: performedBy,
+  addedAt: new Date()
+});
 
-    job.history.push({
-      action:      `Repair added: ${description}`,
-      performedBy: performedBy || 'Unassigned',
-      performedAt: new Date()
-    });
+job.history.push({
+  action:      `Repair added: ${description}`,
+  performedBy: performedBy,
+  performedAt: new Date()
+});
 
     await job.save();
     res.redirect(`/jobs/${job._id}`);
@@ -141,19 +142,20 @@ exports.addPart = async (req, res) => {
       return res.redirect(`/jobs/${job._id}`);
     }
 
-    const { partName, performedBy } = req.body;
+const { partName } = req.body;
+const performedBy = req.session.user.username;
 
-    job.partsUsed.push({
-      partName,
-      addedBy: performedBy || 'Unassigned',
-      addedAt: new Date()
-    });
+job.partsUsed.push({
+  partName,
+  addedBy: performedBy,
+  addedAt: new Date()
+});
 
-    job.history.push({
-      action:      `Part added: ${partName}`,
-      performedBy: performedBy || 'Unassigned',
-      performedAt: new Date()
-    });
+job.history.push({
+  action:      `Part added: ${partName}`,
+  performedBy: performedBy,
+  performedAt: new Date()
+});
 
     await job.save();
     res.redirect(`/jobs/${job._id}`);
@@ -172,18 +174,19 @@ exports.updateStatus = async (req, res) => {
       return res.redirect(`/jobs/${job._id}`);
     }
 
-    const { status, totalPrice, attendingTech } = req.body;
-    const oldStatus = job.status;
+const { status, totalPrice } = req.body;
+const performedBy = req.session.user.username;
+const oldStatus = job.status;
 
-    job.status       = status       || job.status;
-    job.totalPrice   = totalPrice   || job.totalPrice;
-    job.attendingTech = attendingTech || job.attendingTech;
+job.status        = status     || job.status;
+job.totalPrice    = totalPrice || job.totalPrice;
+job.attendingTech = performedBy;
 
-    job.history.push({
-      action:      `Status changed from ${oldStatus} to ${job.status}. Price: ₱${job.totalPrice}. Tech: ${job.attendingTech}`,
-      performedBy: attendingTech || 'Unassigned',
-      performedAt: new Date()
-    });
+job.history.push({
+  action:      `Status changed from ${oldStatus} to ${job.status}. Price: ₱${job.totalPrice}. Tech: ${job.attendingTech}`,
+  performedBy: performedBy,
+  performedAt: new Date()
+});
 
     await job.save();
     res.redirect(`/jobs/${job._id}`);

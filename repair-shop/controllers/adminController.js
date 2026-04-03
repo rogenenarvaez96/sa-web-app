@@ -1,3 +1,4 @@
+const Setting = require('../models/Setting');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const path = require('path');
@@ -7,7 +8,9 @@ const fs = require('fs');
 exports.getDashboard = async (req, res) => {
   try {
     const users = await User.find().sort({ createdAt: -1 });
-    res.render('admin/dashboard', { users });
+    let setting = await Setting.findOne();
+    if (!setting) setting = await Setting.create({ shopName: 'Repair Shop' });
+    res.render('admin/dashboard', { users, setting });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -92,6 +95,40 @@ exports.toggleUser = async (req, res) => {
 exports.uploadLogo = (req, res) => {
   try {
     if (!req.file) return res.redirect('/admin');
+    res.redirect('/admin');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+};
+
+// GET /admin/settings
+exports.getSettings = async (req, res) => {
+  try {
+    let setting = await Setting.findOne();
+    if (!setting) setting = await Setting.create({ shopName: 'Repair Shop' });
+    res.render('admin/dashboard', {
+      users: await require('../models/User').find().sort({ createdAt: -1 }),
+      setting
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+};
+
+// POST /admin/settings
+exports.updateSettings = async (req, res) => {
+  try {
+const { shopName, shopSlogan } = req.body;
+let setting = await Setting.findOne();
+if (!setting) {
+  await Setting.create({ shopName, shopSlogan });
+} else {
+  setting.shopName   = shopName   || 'Repair Shop';
+  setting.shopSlogan = shopSlogan || 'Your trusted gadget repair center';
+  await setting.save();
+}
     res.redirect('/admin');
   } catch (err) {
     console.error(err);
