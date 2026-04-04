@@ -1,0 +1,24 @@
+name: Deploy Repair Shop
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Pull latest code
+        run: |
+          cd ~/Desktop/sa-web-app/repair-shop
+          git pull origin main
+
+      - name: Install dependencies
+        run: |
+          cd ~/Desktop/sa-web-app/repair-shop
+          npm install --production
+
+      - name: Restart app
+        run: pm2 restart repair-shop
